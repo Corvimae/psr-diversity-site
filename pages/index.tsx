@@ -37,10 +37,12 @@ export default function Home() {
           who are women, LGTBQ+, ethnic and racial minorities, and allies.
         </HeaderDescription>
         <HeaderDescription position="right">
-          Follow us on&nbsp;
-          <Anchor href="https://twitter.com/psrdiversity" target="_blank" rel="noreferrer noopener">Twitter</Anchor>,
-          and check out our&nbsp;
-          <Anchor href="https://www.twitch.tv/team/psrdiversity" target="_blank" rel="noreferrer noopener">members</Anchor>!
+          <div>
+            Follow us on&nbsp;
+            <Anchor href="https://twitter.com/psrdiversity" target="_blank" rel="noreferrer noopener">Twitter</Anchor>,
+            and check out our&nbsp;
+            <Anchor href="https://www.twitch.tv/team/psrdiversity" target="_blank" rel="noreferrer noopener">members</Anchor>!
+          </div>
         </HeaderDescription>
       </Header>
     </>
@@ -53,9 +55,8 @@ const Header = styled.header`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1rem 0;
+  padding: 1rem 2rem;
   max-width: 1200px;
-  padding: 0 2rem;
 `;
 
 const HeaderLogo = styled.div`
@@ -79,6 +80,12 @@ const MessageBubble = styled.div<{ position: string }>`
 
   @media (min-width: 900px) {
     align-self: ${({ position }) => position === 'right' ? 'flex-end' : 'flex-start'};
+  }
+
+  @media (max-width: 600px) {
+    && {
+      font-size: 1rem;
+    }
   }
 `;
 
