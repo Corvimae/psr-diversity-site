@@ -63,6 +63,10 @@ const HeaderLogo = styled.div`
   height: 150px;
   background-image: url("/images/logo.png");
   background-size: contain;
+  
+  @media screen and (max-width: 800px) {
+    display: none;
+  }
 `;
 
 const Title = styled.h1`
@@ -71,4 +75,8 @@ const Title = styled.h1`
   color: #fff;
   font-weight: 700;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+
+  @media screen and (max-width: 800px) {
+    font-size: 4rem;
+  }
 `;
