@@ -1,81 +1,20 @@
-import { format, isSameDay, parseISO } from 'date-fns';
+import dynamic from 'next/dynamic';
 import fetch from 'isomorphic-fetch'
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Metadata } from '../../components/Metadata';
+import { Run, EventMetadata } from '../../utils/types';
 
-interface Run {
-  id: number;
-  event: number;
-  name: string;
-  display_name: string;
-  twitch_name: string;
-  deprecated_runners: string;
-  console: string;
-  commentators: string;
-  description: string;
-  starttime: string;
-  endttime: string;
-  order: number;
-  run_time: string;
-  setup_time: string;
-  coop: boolean;
-  category: string;
-  release_year: number;
-  giantbomb_id: number | null;
-  canonical_url: string;
-  public: string;
-  runners: number[];
-  isNewDate?: boolean;
-  parsedStart?: Date;
-}
-
-interface ScheduleProps {
+export interface ScheduleProps {
   runs: Run[]
-  event: {
-    id: number;
-    short: string;
-    name: string;
-    hashtag: string;
-    use_one_step_screening: boolean;
-    receivername: string;
-    targetamount: number;
-    minimumdonation: number;
-    paypalemail: string;
-    paypalcurrency: string;
-    datetime: string;
-    timezone: string;
-    locked: boolean;
-    allow_donations: boolean;
-    canonical_url: string;
-    public: string;
-    amount: number;
-    count: number;
-    max: number;
-    avg: number;
-  }
+  event: EventMetadata;
 }
+
+const NoSSRScheduleView = dynamic(() => import('../../components/ScheduleView'), {
+  ssr: false,
+});
 
 export default function Schedule({ runs, event }: ScheduleProps) {
-  const runList = useMemo(() => {
-    const sorted = runs.filter(({ order }) => order !== null).sort((a, b) => a.order - b.order);
-
-    return sorted.map((run, index) => {
-      const previousRun = sorted[index - 1];
-      const runStart = parseISO(run.starttime);
-
-      const previousRunStart = previousRun && parseISO(previousRun.starttime);
-
-      const isNewDate = previousRun === null || previousRun === undefined || !isSameDay(runStart, previousRunStart);
-      
-      return {
-        ...run,
-        isNewDate,
-        parsedStart: runStart,
-      }
-    });
-  }, [runs]);
-  
   return (
     <Container>
       <Metadata />
@@ -83,28 +22,7 @@ export default function Schedule({ runs, event }: ScheduleProps) {
         <HeaderLogo />
         <Title>{event.name}</Title>
       </Header>
-      <ScheduleContainer>
-        <ScheduleList>
-          {runList.map(run => (
-            <ScheduleSegment key={run.id}>
-              {run.isNewDate && (
-                <DateSeparator>{format(run.parsedStart, 'EEEE, MMMM do')}</DateSeparator>
-              )}
-              <Run>
-                <div>
-                  <RunInfoRow>{format(run.parsedStart, 'h:mm a')}</RunInfoRow>
-                  <RunSubinfoRow>{run.run_time}</RunSubinfoRow>
-                </div>
-                <div>
-                  <RunInfoRow>{run.display_name}</RunInfoRow>
-                  {run.category && (<RunSubinfoRow>{run.category}</RunSubinfoRow>)}
-                </div>
-                <div>{run.deprecated_runners}</div>
-              </Run>
-            </ScheduleSegment>
-          ))}
-        </ScheduleList>
-      </ScheduleContainer>
+      <NoSSRScheduleView runs={runs} />
     </Container>
   )
 }
@@ -153,58 +71,4 @@ const Title = styled.h1`
   color: #fff;
   font-weight: 700;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-`;
-
-const ScheduleContainer = styled.div`
-  position: relative;
-  width: 100%;
-  min-height: 0;
-  align-self: stretch;
-  flex-grow: 1;
-  overflow-y: auto;
-`;
-
-const ScheduleList = styled.div`
-  display: grid;
-  grid-template-columns: max-content 1fr max-content;
-  background-color: rgba(255, 255, 255, 0.5);
-`
-
-const ScheduleSegment = styled.div`
-  display: contents;
-`;
-
-const Run = styled.div`
-  display: contents;
-
-  & > div {
-    color: #000;
-    font-weight: 400;
-    font-size: 1.25rem;
-    padding: 0.5rem 0.5rem;
-  }
-
-  & + & > div {
-    border-top: 1px solid rgba(0, 0, 0, 0.5);
-  }
-`;
-
-const DateSeparator = styled.div`
-  position: sticky;
-  top: 0;
-  grid-column: 1 / -1;
-  color: #fff;
-  font-size: 2rem;
-  padding: 0.5rem 0.5rem;
-  background-color: rgba(0, 0, 0, 0.75);
-`;
-
-const RunInfoRow = styled.div`
-  & + & {
-    margin-top: 0.5rem;
-  }
-`;
-
-const RunSubinfoRow = styled(RunInfoRow)`
-  font-size: 1rem;
 `;
