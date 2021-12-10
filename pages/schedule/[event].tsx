@@ -75,7 +75,7 @@ export default function Schedule({ runs, event }: ScheduleProps) {
             const isNewDate = previousRun === null || previousRun === undefined || !isSameDay(runStart, previousRunStart);
 
             return (
-              <React.Fragment key={run.id}>
+              <ScheduleSegment key={run.id}>
                 {isNewDate && (
                   <DateSeparator>{format(runStart, 'EEEE, MMMM do')}</DateSeparator>
                 )}
@@ -90,7 +90,7 @@ export default function Schedule({ runs, event }: ScheduleProps) {
                   </div>
                   <div>{run.deprecated_runners}</div>
                 </Run>
-              </React.Fragment>
+              </ScheduleSegment>
             )
           })}
         </ScheduleList>
@@ -159,6 +159,10 @@ const ScheduleList = styled.div`
   grid-template-columns: max-content 1fr max-content;
   background-color: rgba(255, 255, 255, 0.5);
 `
+
+const ScheduleSegment = styled.div`
+  display: contents;
+`;
 
 const Run = styled.div`
   display: contents;
