@@ -31,7 +31,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ runs }) => {
     <ScheduleContainer>
       <ScheduleList>
         {runList.map(run => (
-          <ScheduleSegment key={run.id}>
+          <React.Fragment key={run.id}>
             {run.isNewDate && (
               <DateSeparator>{format(run.parsedStart, 'EEEE, MMMM do')}</DateSeparator>
             )}
@@ -46,7 +46,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ runs }) => {
               </div>
               <div>{run.deprecated_runners}</div>
             </RunRow>
-          </ScheduleSegment>
+          </React.Fragment>
         ))}
       </ScheduleList>
     </ScheduleContainer>
