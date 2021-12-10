@@ -1,6 +1,6 @@
 import { format, isSameDay, parseISO } from 'date-fns';
 import fetch from 'isomorphic-fetch'
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Metadata } from '../../components/Metadata';
 
@@ -75,11 +75,11 @@ export default function Schedule({ runs, event }: ScheduleProps) {
             const isNewDate = previousRun === null || previousRun === undefined || !isSameDay(runStart, previousRunStart);
 
             return (
-              <>
+              <React.Fragment key={run.id}>
                 {isNewDate && (
                   <DateSeparator>{format(runStart, 'EEEE, MMMM do')}</DateSeparator>
                 )}
-                <Run key={run.id}>
+                <Run>
                   <div>
                     <RunInfoRow>{format(runStart, 'h:mm a')}</RunInfoRow>
                     <RunSubinfoRow>{run.run_time}</RunSubinfoRow>
@@ -90,7 +90,7 @@ export default function Schedule({ runs, event }: ScheduleProps) {
                   </div>
                   <div>{run.deprecated_runners}</div>
                 </Run>
-              </>
+              </React.Fragment>
             )
           })}
         </ScheduleList>
