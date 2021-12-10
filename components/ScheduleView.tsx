@@ -44,7 +44,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ runs }) => {
                 <RunInfoRow>{run.display_name}</RunInfoRow>
                 {run.category && (<RunSubinfoRow>{run.category}</RunSubinfoRow>)}
               </div>
-              <div>{run.deprecated_runners}</div>
+              <RunnerList>{run.deprecated_runners}</RunnerList>
             </RunRow>
           </React.Fragment>
         ))}
@@ -67,12 +67,13 @@ const ScheduleContainer = styled.div`
 const ScheduleList = styled.div`
   display: grid;
   grid-template-columns: max-content 1fr max-content;
+  max-width: 100%;
   background-color: rgba(255, 255, 255, 0.5);
-`
 
-const ScheduleSegment = styled.div`
-  display: contents;
-`;
+  @media screen and (max-width: 800px) {
+    grid-template-columns: max-content 1fr;
+  }
+`
 
 const RunRow = styled.div`
   display: contents;
@@ -97,6 +98,10 @@ const DateSeparator = styled.div`
   font-size: 2rem;
   padding: 0.5rem 0.5rem;
   background-color: rgba(0, 0, 0, 0.75);
+
+  @media screen and (max-width: 800px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const RunInfoRow = styled.div`
@@ -107,4 +112,13 @@ const RunInfoRow = styled.div`
 
 const RunSubinfoRow = styled(RunInfoRow)`
   font-size: 1rem;
+`;
+
+const RunnerList = styled.div`
+  @media screen and (max-width: 800px) {
+    grid-column: 2;
+    &&& {
+      border-top: none;
+    }
+  }
 `;
