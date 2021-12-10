@@ -26,6 +26,8 @@ interface Run {
   canonical_url: string;
   public: string;
   runners: number[];
+  isNewDate?: boolean;
+  parsedStart?: Date;
 }
 
 interface ScheduleProps {
@@ -55,7 +57,24 @@ interface ScheduleProps {
 }
 
 export default function Schedule({ runs, event }: ScheduleProps) {
-  const runList = useMemo(() => runs.filter(({ order }) => order !== null).sort((a, b) => a.order - b.order), [runs]);
+  const runList = useMemo(() => {
+    const sorted = runs.filter(({ order }) => order !== null).sort((a, b) => a.order - b.order);
+
+    return sorted.map((run, index) => {
+      const previousRun = sorted[index - 1];
+      const runStart = parseISO(run.starttime);
+
+      const previousRunStart = previousRun && parseISO(previousRun.starttime);
+
+      const isNewDate = previousRun === null || previousRun === undefined || !isSameDay(runStart, previousRunStart);
+      
+      return {
+        ...run,
+        isNewDate,
+        parsedStart: runStart,
+      }
+    });
+  }, [runs]);
   
   return (
     <Container>
@@ -66,33 +85,24 @@ export default function Schedule({ runs, event }: ScheduleProps) {
       </Header>
       <ScheduleContainer>
         <ScheduleList>
-          {runList.map((run, index) => {
-            const previousRun = runList[index - 1];
-            const runStart = parseISO(run.starttime);
-
-            const previousRunStart = previousRun && parseISO(previousRun.starttime);
-
-            const isNewDate = previousRun === null || previousRun === undefined || !isSameDay(runStart, previousRunStart);
-
-            return (
-              <ScheduleSegment key={run.id}>
-                {isNewDate && (
-                  <DateSeparator>{format(runStart, 'EEEE, MMMM do')}</DateSeparator>
-                )}
-                <Run>
-                  <div>
-                    <RunInfoRow>{format(runStart, 'h:mm a')}</RunInfoRow>
-                    <RunSubinfoRow>{run.run_time}</RunSubinfoRow>
-                  </div>
-                  <div>
-                    <RunInfoRow>{run.display_name}</RunInfoRow>
-                    {run.category && (<RunSubinfoRow>{run.category}</RunSubinfoRow>)}
-                  </div>
-                  <div>{run.deprecated_runners}</div>
-                </Run>
-              </ScheduleSegment>
-            )
-          })}
+          {runList.map(run => (
+            <ScheduleSegment key={run.id}>
+              {run.isNewDate && (
+                <DateSeparator>{format(run.parsedStart, 'EEEE, MMMM do')}</DateSeparator>
+              )}
+              <Run>
+                <div>
+                  <RunInfoRow>{format(run.parsedStart, 'h:mm a')}</RunInfoRow>
+                  <RunSubinfoRow>{run.run_time}</RunSubinfoRow>
+                </div>
+                <div>
+                  <RunInfoRow>{run.display_name}</RunInfoRow>
+                  {run.category && (<RunSubinfoRow>{run.category}</RunSubinfoRow>)}
+                </div>
+                <div>{run.deprecated_runners}</div>
+              </Run>
+            </ScheduleSegment>
+          ))}
         </ScheduleList>
       </ScheduleContainer>
     </Container>
