@@ -20,7 +20,10 @@ export default function Schedule({ runs, event }: ScheduleProps) {
       <Metadata />
       <Header>
         <HeaderLogo />
-        <Title>{event.name}</Title>
+        <TitleContainer>
+          <Title>{event.name}</Title>
+          <Subtitle>All times are displayed in your local timezone.</Subtitle>
+        </TitleContainer>
       </Header>
       <NoSSRScheduleView runs={runs} />
     </Container>
@@ -69,14 +72,36 @@ const HeaderLogo = styled.div`
   }
 `;
 
-const Title = styled.h1`
+const TitleContainer = styled.div`
   margin-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media screen and (max-width: 800px) {
+    margin: 0;
+  }
+`;
+
+const Title = styled.h1`
   font-size: 5rem;
   color: #fff;
   font-weight: 700;
   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 
   @media screen and (max-width: 800px) {
-    font-size: 4rem;
+    font-size: 3.5rem;
   }
 `;
+
+const Subtitle = styled.h3`
+  margin: 1rem 0 0;
+  font-size: 1.5rem;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  color: #fff;
+  font-weight: 700;
+
+  @media screen and (max-width: 800px) {
+    font-size: 1rem;
+  }
+`
