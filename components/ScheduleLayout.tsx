@@ -3,15 +3,15 @@ import parseISO from 'date-fns/parseISO';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import styled from 'styled-components';
-import { Metadata } from '../../components/Metadata';
-import { Run, EventMetadata } from '../../utils/types';
+import { Metadata } from './Metadata';
+import { Run, EventMetadata } from '../utils/types';
 
 export interface ScheduleLayoutProps {
   runs: Run[]
   event: EventMetadata;
 }
 
-const NoSSRScheduleView = dynamic(() => import('../../components/ScheduleView'), {
+const NoSSRScheduleView = dynamic(() => import('./ScheduleView'), {
   ssr: false,
 });
 
