@@ -97,7 +97,7 @@ const DateSeparator = styled.div`
   color: #fff;
   font-size: 2rem;
   padding: 0.5rem 0.5rem;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: #333;
 
   @media screen and (max-width: 800px) {
     font-size: 1.5rem;
