@@ -1,12 +1,22 @@
 import styled from 'styled-components';
 import { Metadata } from '../components/Metadata';
 
-export default function Home() {
+export default function Home({ event }) {
   return (
     <>
       <Metadata />
       <Header>
         <HeaderLogo />
+        {event && (
+          <ActiveEvent>
+            {event.fields.name} is {event.fields.allow_donations ? 'live NOW!' : 'coming soon!'}
+            
+            <Anchor href="/schedule">Check out the schedule!</Anchor>
+            {event.fields.allow_donations && (
+              <Anchor href="/donate">Donate to support {event.fields.receivername}!</Anchor>
+            )}
+          </ActiveEvent>
+        )}
         <HeaderDescription position="left">
           Pokémon Speedrunning Diversity unites together a group of likeminded Pokémon speedrunners
           who are women, LGTBQ+, ethnic and racial minorities, and allies.
@@ -19,9 +29,28 @@ export default function Home() {
             <Anchor href="https://www.twitch.tv/team/psrdiversity" target="_blank" rel="noreferrer noopener">members</Anchor>!
           </div>
         </HeaderDescription>
+        <HeaderDescription position="left">
+          <div>
+            If you&apos;re a Pokémon speedrunner or have an interest in starting,&nbsp;
+            <Anchor href="https://forms.gle/U1Raa3HxdqTq16n59" target="_blank" rel="noreferrer noopener">
+            apply to join the team today
+            </Anchor>!
+            </div>
+        </HeaderDescription>
       </Header>
     </>
   )
+}
+
+export async function getServerSideProps(_context) {
+  const allEvents = await (await fetch(`https://psrdiversity.com/tracker/api/v1/search/?type=event`)).json();
+  const activeEvent = allEvents.find(item => !item.fields.locked) ?? null;
+
+  return {
+    props: {
+      event: activeEvent,
+    },
+  }
 }
 
 const Header = styled.header`
@@ -80,3 +109,30 @@ const Anchor = styled.a`
     color: #85abe4;
   }
 `
+
+const ActiveEvent = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 2rem 6rem;
+  font-size: 2rem;
+  margin-top: 2rem; 
+
+  & ${Anchor} {
+    margin-top: 0.5rem;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    transform: skew(-15deg);
+    background-color: #fff;
+    box-shadow: 0px 0px 0.75rem 0.25rem rgba(0, 0, 0, 0.1);
+  }
+`;
