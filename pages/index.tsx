@@ -1,7 +1,10 @@
+import { isAfter, parseISO } from 'date-fns';
 import styled from 'styled-components';
 import { Metadata } from '../components/Metadata';
 
 export default function Home({ event }) {
+  const isEventPending = event ? isAfter(parseISO(event.fields.datetime), Date.now()) : false;
+
   return (
     <>
       <Metadata />
@@ -9,10 +12,10 @@ export default function Home({ event }) {
         <HeaderLogo />
         {event && (
           <ActiveEvent>
-            {event.fields.name} is {event.fields.allow_donations ? 'live NOW!' : 'coming soon!'}
+            {event.fields.name} is {isEventPending ? 'coming soon!' : 'live NOW!'}
             
             <Anchor href="/schedule">Check out the schedule!</Anchor>
-            {event.fields.allow_donations && (
+            {!isEventPending && event.fields.allow_donations && (
               <Anchor href="/donate">Donate to support {event.fields.receivername}!</Anchor>
             )}
           </ActiveEvent>
